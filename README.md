@@ -1,11 +1,7 @@
 # Vantage QLink For HomeAssistant
 
-[![GitHub Release][releases-shield]][releases]
-[![GitHub Activity][commits-shield]][commits]
-[![License][license-shield]](LICENSE)
-
-[![hacs][hacsbadge]][hacs]
-![Project Maintenance][maintenance-shield]
+[![GitHub release](https://img.shields.io/github/v/release/bassrock/hass-vantage-qlink?style=for-the-badge)](http://github.com/bassrock/hass-vantage-qlink/releases/latest)
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
 
 A Home Assistant custom integration to interact with [Vantage's QLink System](https://dealer.vantagecontrols.com/downloads/Vantage%20QLink%20Program%20Examples%20Book%204th%20Edition.pdf) via an [IP Enabler](https://vantageemea.com/technical/IP%20Enabler.pdf)
 
