@@ -1,0 +1,14 @@
+{
+  "domain": "vantage_qlink",
+  "name": "Vantage QLink",
+  "codeowners": ["@bassrock"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://www.home-assistant.io/integrations/vantage_qlink",
+  "homekit": {},
+  "iot_class": "local_polling",
+  "requirements": ["typing_extensions==4.11.0"],
+  "ssdp": [],
+  "zeroconf": [],
+  "version": "0.0.1"
+}
