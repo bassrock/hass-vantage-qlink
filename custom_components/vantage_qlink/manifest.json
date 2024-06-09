@@ -7,8 +7,8 @@
   "documentation": "https://www.home-assistant.io/integrations/vantage_qlink",
   "homekit": {},
   "iot_class": "local_polling",
-  "requirements": ["typing_extensions==4.11.0"],
+  "requirements": ["typing_extensions==4.12.2"],
   "ssdp": [],
   "zeroconf": [],
-  "version": "0.0.1"
+  "version": "0.0.2"
 }
