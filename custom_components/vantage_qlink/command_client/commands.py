@@ -4,8 +4,7 @@ from dataclasses import dataclass
 from decimal import Decimal
 import logging
 from types import TracebackType
-
-from typing_extensions import Self
+from typing import Self
 
 from .connection import BaseConnection
 from .errors import CommandError

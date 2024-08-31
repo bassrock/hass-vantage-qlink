@@ -8,10 +8,12 @@ class LoadInterface(Interface):
 
     method_signatures = {
         "VGA": int,
+        "VGL": int,
+        "VLA": int,
         "VLO": int,
     }
 
-    async def set_level(self, contractor_number: int, level: int) -> None:
+    async def set_level(self, contractor_number: int | str, level: int) -> None:
         """Set the level of a load. Passthrough to ramp
 
         Args:
@@ -21,22 +23,25 @@ class LoadInterface(Interface):
 
         await self.ramp(contractor_number=contractor_number, level=level, time=0)
 
-    async def get_level(self, contractor_number: int) -> int:
+    async def get_level(self, contractor_number: int | str) -> int:
         """Get the level of a load, using cached value if available.
 
         Args:
-            contractor_number: The Vantage ID of the load.
+            contractor_number: The Vantage ID or address in (1-2-3) format of the load.
 
         Returns:
             The level of the load, as a percentage (0-100).
         """
         # VGL <contractor_number>
+        # VGA <master> <module> <load>
         # -> <level>
+        if isinstance(contractor_number, str):
+            return await self.invoke(contractor_number, "VGA", as_type=int)
         return await self.invoke(contractor_number, "VGL", as_type=int)
 
     async def ramp(
         self,
-        contractor_number: int,
+        contractor_number: int | str,
         level: int = 0,
         time: int = 0,
     ) -> None:
@@ -51,13 +56,17 @@ class LoadInterface(Interface):
         level = max(min(level, 100), 0)
 
         # VLO <contractor_number> <level> <fade>
+        # VLA <master> <module> <load> <level> <fade>
         # -> <level>
-        await self.invoke(contractor_number, "VLO", level, time)
+
+        if isinstance(contractor_number, str):
+            return await self.invoke(contractor_number, "VLA", level, time)
+        return await self.invoke(contractor_number, "VLO", level, time)
 
     # Additional convenience methods, not part of the Vantage API
     async def turn_on(
         self,
-        contractor_number: int,
+        contractor_number: int | str,
         transition: float | None = None,
         level: float | None = None,
     ) -> None:
@@ -77,7 +86,7 @@ class LoadInterface(Interface):
         await self.ramp(contractor_number, time=transition, level=level)
 
     async def turn_off(
-        self, contractor_number: int, transition: float | None = None
+        self, contractor_number: int | str, transition: float | None = None
     ) -> None:
         """Turn off a load with an optional transition time.
 

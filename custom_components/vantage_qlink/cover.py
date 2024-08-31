@@ -1,6 +1,6 @@
 import math
 
-from homeassistant.components.light import ATTR_BRIGHTNESS, ColorMode, LightEntity
+from homeassistant.components.cover import CoverEntity, ATTR_POSITION
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import (
@@ -9,16 +9,9 @@ from homeassistant.helpers.device_registry import (
     async_get as get_device_registry,
 )
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.util.percentage import (
-    percentage_to_ranged_value,
-    ranged_value_to_percentage,
-)
-
 from .command_client.commands import CommandClient
 from .command_client.load import LoadInterface
-from .const import CONF_LIGHTS, DOMAIN
-
-BRIGHTNESS_SCALE = (1, 255)
+from .const import CONF_COVERS, DOMAIN
 
 
 async def async_setup_entry(
@@ -26,14 +19,14 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up the light platform."""
+    """Set up the cover platform."""
 
     client: CommandClient = hass.data[DOMAIN][entry.entry_id]
     current_device_ids = [
-        item.strip() for item in entry.options[CONF_LIGHTS].split(",")
+        item.strip() for item in entry.options[CONF_COVERS].split(",")
     ]
     async_add_entities(
-        QLinkLight(contractor_number=deviceId, client=client)
+        QLinkCover(contractor_number=deviceId, client=client)
         for deviceId in current_device_ids
     )
 
@@ -56,7 +49,7 @@ async def remove_unlisted_devices(
             device_registry.async_remove_device(device.id)
 
 
-class QLinkLight(LightEntity):
+class QLinkCover(CoverEntity):
     _level: int = 0
 
     def __init__(self, contractor_number: int | str, client: CommandClient) -> None:
@@ -82,37 +75,23 @@ class QLinkLight(LightEntity):
     @property
     def unique_id(self) -> str | None:
         """Return a unique ID."""
-        return f"vantage_light_{self._contractor_number}"
+        return f"vantage_cover_{self._contractor_number}"
 
     @property
-    def is_on(self) -> bool | None:
-        """Return whether the light is on, or if multiple all the lights are on."""
-        return self._level > 0
+    def is_closed(self) -> bool | None:
+        """Return whether the cover is closed, or open."""
+        return self._level == 0
 
     @property
-    def brightness(self) -> int | None:
-        """Return the brightness of this light between 0..255."""
-        return math.ceil(percentage_to_ranged_value(BRIGHTNESS_SCALE, self._level))
+    def current_cover_position(self) -> int | None:
+        """Return the current position of the cover."""
+        return self._level
 
     @property
     def should_poll(self) -> bool:
         return True
 
-    @property
-    def supported_color_modes(self) -> set[str] | None:
-        """Flag supported color modes."""
-        color_modes = set()
-        color_modes.add(ColorMode.BRIGHTNESS)
-        return color_modes
-
-    async def async_turn_on(self, **kwargs) -> None:
-        """Instruct the light to turn on."""
-        self._level = ranged_value_to_percentage(
-            BRIGHTNESS_SCALE, kwargs.get(ATTR_BRIGHTNESS, 255)
-        )
-        await self._client.set_level(self._contractor_number, self._level)
-
-    async def async_turn_off(self, **kwargs) -> None:
-        """Instruct the light to turn off."""
-        self._level = 0
+    async def async_set_cover_position(self, **kwargs):
+        """Move the cover to a specific position."""
+        self._level = kwargs.get(ATTR_POSITION, 0)
         await self._client.set_level(self._contractor_number, self._level)

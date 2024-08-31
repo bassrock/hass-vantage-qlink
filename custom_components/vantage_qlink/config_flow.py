@@ -14,7 +14,7 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
 
 from .command_client.commands import CommandClient
-from .const import CONF_LIGHTS, DOMAIN
+from .const import CONF_LIGHTS, CONF_COVERS, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -23,7 +23,8 @@ STEP_DATA_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_HOST): str,
         vol.Required(CONF_PORT, description="Port", default=10001): int,
-        vol.Required(CONF_LIGHTS, description="Lights"): str,
+        vol.Optional(CONF_LIGHTS, description="Lights"): str,
+        vol.Optional(CONF_COVERS, description="Covers"): str,
     }
 )
 
@@ -66,16 +67,16 @@ class ConfigFlow(ConfigFlow, domain=DOMAIN):
                 errors["base"] = "unknown"
 
             try:
-                input_list = [
-                    item.strip() for item in user_input[CONF_LIGHTS].split(",")
-                ]
                 return self.async_create_entry(
                     title=f"Vanatage QLink {user_input[CONF_HOST]}",
                     data={
                         CONF_HOST: user_input[CONF_HOST],
                         CONF_PORT: user_input[CONF_PORT],
                     },
-                    options={CONF_LIGHTS: user_input[CONF_LIGHTS]},
+                    options={
+                        CONF_LIGHTS: user_input[CONF_LIGHTS],
+                        CONF_COVERS: user_input[CONF_COVERS],
+                    },
                 )
             except Exception as e:
                 errors["base"] = "invalid_list"
@@ -98,13 +99,13 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         errors = {}
         if user_input is not None:
             try:
-                input_list = [
-                    item.strip() for item in user_input[CONF_LIGHTS].split(",")
-                ]
                 return self.async_create_entry(
                     title=self.config_entry.title,
                     data=self.config_entry.data,
-                    options={CONF_LIGHTS: user_input[CONF_LIGHTS]},
+                    options={
+                        CONF_LIGHTS: user_input[CONF_LIGHTS],
+                        CONF_COVERS: user_input[CONF_COVERS],
+                    },
                 )
             except Exception as e:
                 errors["base"] = "invalid_list"
@@ -113,13 +114,17 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         # Pre-fill the form with the existing options
         options = self.config_entry.options
         lights = options.get(CONF_LIGHTS, "")
+        covers = options.get(CONF_COVERS, "")
 
         return self.async_show_form(
             step_id="init",
             data_schema=vol.Schema(
                 {
-                    vol.Required(
+                    vol.Optional(
                         CONF_LIGHTS, default=lights, description="Lights"
+                    ): str,
+                    vol.Optional(
+                        CONF_COVERS, default=covers, description="Covers"
                     ): str,
                 }
             ),

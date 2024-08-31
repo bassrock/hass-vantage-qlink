@@ -9,7 +9,7 @@ from homeassistant.core import HomeAssistant
 from .command_client.commands import CommandClient
 from .const import DOMAIN
 
-PLATFORMS: list[Platform] = [Platform.LIGHT]
+PLATFORMS: list[Platform] = [Platform.LIGHT, Platform.COVER]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:

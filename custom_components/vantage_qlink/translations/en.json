@@ -13,7 +13,15 @@
         "data": {
           "host": "Host",
           "password": "Password",
-          "username": "Username"
+          "username": "Username",
+          "vantage_lights": "Lights",
+          "vantage_covers": "Covers"
+        }
+      },
+      "init": {
+        "data": {
+          "vantage_lights": "Lights",
+          "vantage_covers": "Covers"
         }
       }
     }

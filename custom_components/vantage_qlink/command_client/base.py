@@ -28,13 +28,13 @@ class Interface:
 
     @overload
     async def invoke(
-        self, contractor_number: int, method: str, *params: ParameterType
+        self, contractor_number: int | str, method: str, *params: ParameterType
     ) -> Any: ...
 
     @overload
     async def invoke(
         self,
-        contractor_number: int,
+        contractor_number: int | str,
         method: str,
         *params: ParameterType,
         as_type: type[T],
@@ -42,7 +42,7 @@ class Interface:
 
     async def invoke(
         self,
-        contractor_number: int,
+        contractor_number: int | str,
         method: str,
         *params: ParameterType,
         as_type: type[T] | None = None,
@@ -60,6 +60,8 @@ class Interface:
         """
         # <method> <id>
         # -> A Number
+        if contractor_number.isinstance(str):
+            contractor_number = contractor_number.replace("-", " ")
         request = f"{method} {contractor_number}"
         if params:
             request += f" {encode_params(*params)}"
