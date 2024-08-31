@@ -29,9 +29,11 @@ async def async_setup_entry(
     """Set up the light platform."""
 
     client: CommandClient = hass.data[DOMAIN][entry.entry_id]
-    current_device_ids = [
-        item.strip() for item in entry.options[CONF_LIGHTS].split(",")
-    ]
+    current_device_ids = (
+        [item.strip() for item in entry.options.get(CONF_LIGHTS).split(",")]
+        if entry.options.get(CONF_LIGHTS, None) is not None
+        else []
+    )
     async_add_entities(
         QLinkLight(contractor_number=deviceId, client=client)
         for deviceId in current_device_ids

@@ -22,9 +22,11 @@ async def async_setup_entry(
     """Set up the cover platform."""
 
     client: CommandClient = hass.data[DOMAIN][entry.entry_id]
-    current_device_ids = [
-        item.strip() for item in entry.options[CONF_COVERS].split(",")
-    ]
+    current_device_ids = (
+        [item.strip() for item in entry.options.get(CONF_COVERS).split(",")]
+        if entry.options.get(CONF_COVERS, None) is not None
+        else []
+    )
     async_add_entities(
         QLinkCover(contractor_number=deviceId, client=client)
         for deviceId in current_device_ids
