@@ -60,7 +60,7 @@ class Interface:
         """
         # <method> <id>
         # -> A Number
-        if contractor_number.isinstance(str):
+        if isinstance(contractor_number, str):
             contractor_number = contractor_number.replace("-", " ")
         request = f"{method} {contractor_number}"
         if params:
