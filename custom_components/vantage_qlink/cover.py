@@ -54,7 +54,11 @@ class QLinkCover(CoverEntity):
 
     def __init__(self, contractor_number: int | str, client: CommandClient) -> None:
         super().__init__()
-        self._contractor_number = contractor_number
+        self._contractor_number = (
+            int(contractor_number)
+            if contractor_number.isnumeric()
+            else str(contractor_number)
+        )
         self._client = LoadInterface(client)
 
     async def async_update(self):
