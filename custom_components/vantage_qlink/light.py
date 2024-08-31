@@ -52,7 +52,10 @@ async def remove_unlisted_devices(
     for device in registered_devices:
         # Assuming the identifiers tuple contains your service's unique ID
         device_unique_id = next(iter(device.identifiers))[1]
-        if device_unique_id not in current_device_ids:
+        if (
+            device_unique_id.startswith("vantage_light_")
+            and device_unique_id not in current_device_ids
+        ):
             device_registry.async_remove_device(device.id)
 
 
