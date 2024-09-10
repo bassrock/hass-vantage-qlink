@@ -104,11 +104,23 @@ class QLinkLight(LightEntity):
         return math.ceil(percentage_to_ranged_value(BRIGHTNESS_SCALE, self._level))
 
     @property
+    def color_mode(self) -> ColorMode:
+        """Return the color mode of the light."""
+        return ColorMode.BRIGHTNESS
+
+    @property
     def should_poll(self) -> bool:
         return True
 
     @property
     def supported_color_modes(self) -> set[str] | None:
+        """Flag supported color modes."""
+        color_modes = set()
+        color_modes.add(ColorMode.BRIGHTNESS)
+        return color_modes
+
+    @property
+    def color_mode(self) -> set[str] | None:
         """Flag supported color modes."""
         color_modes = set()
         color_modes.add(ColorMode.BRIGHTNESS)
