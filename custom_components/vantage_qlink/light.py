@@ -113,18 +113,9 @@ class QLinkLight(LightEntity):
         return True
 
     @property
-    def supported_color_modes(self) -> set[str] | None:
+    def supported_color_modes(self) -> set[ColorMode] | None:
         """Flag supported color modes."""
-        color_modes = set()
-        color_modes.add(ColorMode.BRIGHTNESS)
-        return color_modes
-
-    @property
-    def color_mode(self) -> set[str] | None:
-        """Flag supported color modes."""
-        color_modes = set()
-        color_modes.add(ColorMode.BRIGHTNESS)
-        return color_modes
+        return {ColorMode.BRIGHTNESS}
 
     async def async_turn_on(self, **kwargs) -> None:
         """Instruct the light to turn on."""
